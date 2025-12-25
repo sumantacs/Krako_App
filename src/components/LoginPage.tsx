@@ -27,12 +27,12 @@ export default function LoginPage() {
       const { error: otpError } = await signInWithOtp(email);
 
       if (otpError) {
-        setError('Failed to send OTP. Please try again.');
+        setError('Failed to send magic link. Please try again.');
         setLoading(false);
         return;
       }
 
-      setSuccess('Check your email for the 6-digit code');
+      setSuccess('Check your inbox for the magic link to log in');
       setStep('otp');
       setLoading(false);
     } catch (err) {
@@ -92,7 +92,7 @@ export default function LoginPage() {
             Welcome to Krako
           </h1>
           <p className="text-gray-600">
-            Enter your email to get started
+            Enter your email for a magic link to log in
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export default function LoginPage() {
                 disabled={loading || !email}
                 className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-md"
               >
-                {loading ? 'Sending...' : 'Send OTP'}
+                {loading ? 'Sending...' : 'Send Magic Link'}
               </button>
             </form>
           ) : (
@@ -180,7 +180,7 @@ export default function LoginPage() {
           )}
 
           <div className="mt-6 text-center text-xs text-gray-500">
-            Secure email verification
+            Simple, easy, and secure magic link authentication
           </div>
         </div>
 
