@@ -5,7 +5,7 @@ import ShopSection from './ShopSection';
 import KpontsRewardsSection from './KpontsRewardsSection';
 import { supabase, Task, ShopItem, RewardUtility, getOrCreateProfile, handleDailyClaim } from '../lib/supabase';
 
-const DEMO_USER_ID = 'demo-user-123';
+const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
 
 export default function HomePage() {
   const userId = DEMO_USER_ID;
