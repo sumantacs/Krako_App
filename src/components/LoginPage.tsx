@@ -3,15 +3,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { Mail, Check } from 'lucide-react';
 
 export default function LoginPage() {
-  const { signInWithOtp, verifyOtp } = useAuth();
+  const { signInWithOtp } = useAuth();
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<'email' | 'otp'>('email');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  const handleSendMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !email.includes('@')) {
@@ -24,55 +22,25 @@ export default function LoginPage() {
       setError(null);
       setSuccess(null);
 
-      const { error: otpError } = await signInWithOtp(email);
+      const { error: magicLinkError } = await signInWithOtp(email);
 
-      if (otpError) {
+      if (magicLinkError) {
         setError('Failed to send magic link. Please try again.');
         setLoading(false);
         return;
       }
 
       setSuccess('Check your inbox for the magic link to log in');
-      setStep('otp');
       setLoading(false);
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
-      console.error('Send OTP error:', err);
+      console.error('Send magic link error:', err);
       setLoading(false);
     }
   };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!otp || otp.length !== 6) {
-      setError('Please enter a valid 6-digit code');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const { error: verifyError } = await verifyOtp(email, otp);
-
-      if (verifyError) {
-        setError('Invalid code. Please try again.');
-        setLoading(false);
-        return;
-      }
-
-      setSuccess('Login successful!');
-    } catch (err) {
-      setError('Failed to verify code. Please try again.');
-      console.error('Verify OTP error:', err);
-      setLoading(false);
-    }
-  };
-
-  const handleBackToEmail = () => {
-    setStep('email');
-    setOtp('');
+  const handleTryAgain = () => {
+    setEmail('');
     setError(null);
     setSuccess(null);
   };
@@ -110,27 +78,27 @@ export default function LoginPage() {
             </div>
           )}
 
-          {step === 'email' ? (
-            <form onSubmit={handleSendOtp} className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
-                    disabled={loading}
-                    autoFocus
-                  />
-                </div>
+          <form onSubmit={handleSendMagicLink} className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email address
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400"
+                  disabled={loading || success !== null}
+                  autoFocus
+                />
               </div>
+            </div>
 
+            {!success ? (
               <button
                 type="submit"
                 disabled={loading || !email}
@@ -138,46 +106,16 @@ export default function LoginPage() {
               >
                 {loading ? 'Sending...' : 'Send Magic Link'}
               </button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-4">
-              <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
-                  Verification code
-                </label>
-                <input
-                  id="otp"
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="000000"
-                  maxLength={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent outline-none transition-all text-gray-900 placeholder-gray-400 text-center text-2xl tracking-widest font-mono"
-                  disabled={loading}
-                  autoFocus
-                />
-                <p className="mt-2 text-xs text-gray-500 text-center">
-                  Sent to {email}
-                </p>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || otp.length !== 6}
-                className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-md"
-              >
-                {loading ? 'Verifying...' : 'Verify & Login'}
-              </button>
-
+            ) : (
               <button
                 type="button"
-                onClick={handleBackToEmail}
-                className="w-full text-gray-600 hover:text-gray-900 text-sm font-medium py-2 transition-colors"
+                onClick={handleTryAgain}
+                className="w-full text-gray-600 hover:text-gray-900 text-sm font-medium py-2 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50"
               >
-                Use a different email
+                Try another email
               </button>
-            </form>
-          )}
+            )}
+          </form>
 
           <div className="mt-6 text-center text-xs text-gray-500">
             Simple, easy, and secure magic link authentication
