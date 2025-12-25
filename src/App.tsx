@@ -16,11 +16,8 @@ function ProtectedApp() {
   useEffect(() => {
     console.log('App - User state:', user?.email, 'Loading:', loading);
     if (!loading && !user) {
+      console.log('No user, redirecting to login');
       navigate('/', { replace: true });
-    }
-    if (user && window.location.hash) {
-      console.log('Cleaning up URL hash after successful auth');
-      window.history.replaceState(null, '', window.location.pathname);
     }
   }, [user, loading, navigate]);
 
@@ -64,13 +61,6 @@ function ProtectedApp() {
 
 function PublicRoute() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && user) {
-      navigate('/app', { replace: true });
-    }
-  }, [user, loading, navigate]);
 
   if (loading) {
     return (
@@ -84,7 +74,7 @@ function PublicRoute() {
   }
 
   if (user) {
-    return null;
+    return <Navigate to="/app" replace />;
   }
 
   return <LoginPage />;

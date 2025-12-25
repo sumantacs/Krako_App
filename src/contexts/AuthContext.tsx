@@ -39,16 +39,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
 
-      if (event === 'SIGNED_IN') {
-        console.log('User signed in successfully');
-      }
+      if (event === 'SIGNED_IN' && session) {
+        console.log('User signed in successfully, redirecting to /app');
+        setSession(session);
+        setUser(session.user);
+        setLoading(false);
 
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+        if (window.location.pathname !== '/app') {
+          window.location.href = '/app';
+        }
+      } else if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
+        setSession(null);
+        setUser(null);
+        setLoading(false);
+      } else {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
