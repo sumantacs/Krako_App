@@ -1,24 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Wallet, ArrowUpRight, ArrowDownLeft, History, TrendingUp } from 'lucide-react';
 import { getOrCreateProfile, supabase, Transaction } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
+
+const DEMO_USER_ID = 'demo-user-123';
 
 export default function WalletPage() {
-  const { user } = useAuth();
+  const userId = DEMO_USER_ID;
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const tonBalance = 0.5;
 
   useEffect(() => {
-    if (user) {
-      loadWalletData();
-    }
-  }, [user]);
+    loadWalletData();
+  }, []);
 
   const loadWalletData = async () => {
-    if (!user) return;
-
-    const profile = await getOrCreateProfile(user.id);
+    const profile = await getOrCreateProfile(userId);
     if (profile) {
       setBalance(Number(profile.krako_balance));
     }
@@ -26,7 +23,7 @@ export default function WalletPage() {
     const { data, error } = await supabase
       .from('transactions')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(10);
 

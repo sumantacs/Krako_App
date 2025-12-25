@@ -4,10 +4,11 @@ import TasksList from './TasksList';
 import ShopSection from './ShopSection';
 import KpontsRewardsSection from './KpontsRewardsSection';
 import { supabase, Task, ShopItem, RewardUtility, getOrCreateProfile, handleDailyClaim } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
+
+const DEMO_USER_ID = 'demo-user-123';
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const userId = DEMO_USER_ID;
   const [krakoBalance, setKrakoBalance] = useState(0);
   const [hashrate] = useState(3);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -19,13 +20,11 @@ export default function HomePage() {
   const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    if (user?.id) {
-      loadProfile();
-      loadTasks();
-      loadShopItems();
-      loadRewardUtilities();
-    }
-  }, [user?.id]);
+    loadProfile();
+    loadTasks();
+    loadShopItems();
+    loadRewardUtilities();
+  }, []);
 
   useEffect(() => {
 
@@ -56,9 +55,7 @@ export default function HomePage() {
   }, []);
 
   const loadProfile = async () => {
-    if (!user?.id) return;
-
-    const profile = await getOrCreateProfile(user.id);
+    const profile = await getOrCreateProfile(userId);
     if (profile) {
       setKrakoBalance(Number(profile.krako_balance));
 
@@ -134,9 +131,7 @@ export default function HomePage() {
   };
 
   const handleClaim = async () => {
-    if (!user?.id) return;
-
-    const result = await handleDailyClaim(user.id);
+    const result = await handleDailyClaim(userId);
 
     if (result.success && result.amount !== undefined) {
       setKrakoBalance(prev => prev + result.amount);
