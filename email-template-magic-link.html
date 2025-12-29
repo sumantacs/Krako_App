@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in to Krako</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .email-content {
+            padding: 60px 40px;
+            text-align: center;
+        }
+        .logo-container {
+            margin-bottom: 40px;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+        }
+        h1 {
+            color: #1f2937;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 24px 0;
+        }
+        .description {
+            color: #4b5563;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0 0 40px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #14b8a6;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 18px 60px;
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+        .security-notice {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .footer {
+            padding: 30px 40px;
+            background-color: #f9fafb;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-content">
+            <div class="logo-container">
+                <svg class="logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#14b8a6">
+                        <circle cx="100" cy="70" r="40" fill="none" stroke="#14b8a6" stroke-width="6"/>
+                        <circle cx="85" cy="65" r="6"/>
+                        <circle cx="115" cy="65" r="6"/>
+                        <path d="M 60 110 Q 50 140 40 160 Q 45 165 50 160 Q 60 140 70 115" stroke-width="6" fill="none" stroke="#14b8a6" stroke-linecap="round"/>
+                        <path d="M 80 115 Q 75 145 70 165 Q 75 170 80 165 Q 85 145 90 120" stroke-width="6" fill="none" stroke="#14b8a6" stroke-linecap="round"/>
+                        <path d="M 100 118 Q 100 150 100 170 Q 105 175 110 170 Q 110 150 110 123" stroke-width="6" fill="none" stroke="#14b8a6" stroke-linecap="round"/>
+                        <path d="M 120 115 Q 125 145 130 165 Q 135 170 140 165 Q 135 145 130 120" stroke-width="6" fill="none" stroke="#14b8a6" stroke-linecap="round"/>
+                        <path d="M 140 110 Q 150 140 160 160 Q 165 165 170 160 Q 160 140 150 115" stroke-width="6" fill="none" stroke="#14b8a6" stroke-linecap="round"/>
+                        <ellipse cx="100" cy="155" rx="35" ry="8" opacity="0.3"/>
+                    </g>
+                </svg>
+            </div>
+
+            <h1>Sign in to Krako</h1>
+
+            <p class="description">
+                Click the button below to securely log in.<br>
+                No passwords. No confusion.
+            </p>
+
+            <a href="{{ .ConfirmationURL }}" class="cta-button">
+                Log in to Krako
+            </a>
+
+            <p class="security-notice">
+                This link expires in a few minutes.<br>
+                If you didn't request this, you can safely ignore this email.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Krako. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
