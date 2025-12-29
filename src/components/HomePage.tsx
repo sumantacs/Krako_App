@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { Share2, Zap, ExternalLink, Trophy } from 'lucide-react';
+import { Share2, Zap, LogOut } from 'lucide-react';
 import TasksList from './TasksList';
 import ShopSection from './ShopSection';
 import KpontsRewardsSection from './KpontsRewardsSection';
 import { supabase, Task, ShopItem, RewardUtility, getOrCreateProfile, handleDailyClaim } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 const DEMO_USER_ID = '00000000-0000-0000-0000-000000000000';
 
 export default function HomePage() {
+  const { signOut } = useAuth();
   const userId = DEMO_USER_ID;
   const [krakoBalance, setKrakoBalance] = useState(0);
   const [hashrate] = useState(3);
@@ -168,6 +170,14 @@ export default function HomePage() {
     window.open(urls[platform], '_blank');
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   return (
     <div className="pb-20 bg-white min-h-screen">
       <div className="max-w-md mx-auto">
@@ -181,11 +191,13 @@ export default function HomePage() {
               />
               <span className="font-bold text-xl">Krako Mining App</span>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                <ExternalLink size={16} />
-              </button>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all"
+            >
+              <LogOut size={16} className="text-red-600" />
+              <span className="text-sm font-medium text-red-700">Log Out</span>
+            </button>
           </div>
           <div className="flex items-center gap-1.5 text-sm text-gray-600 ml-[52px]">
             <Zap size={14} className="text-yellow-500 fill-yellow-500" />
