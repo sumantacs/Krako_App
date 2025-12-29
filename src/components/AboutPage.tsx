@@ -1,6 +1,16 @@
-import { CheckCircle, Twitter, Facebook, Send } from 'lucide-react';
+import { CheckCircle, Twitter, Facebook, Send, LogOut } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function AboutPage() {
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
   const links = [
     {
       icon: Send,
@@ -47,6 +57,18 @@ export default function AboutPage() {
               <CheckCircle size={18} className="text-green-500" />
             </button>
           ))}
+        </div>
+
+        <div className="mt-8">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 p-4 bg-red-50 border-2 border-red-200 rounded-xl hover:bg-red-100 hover:border-red-300 transition-all"
+          >
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-md">
+              <LogOut size={22} className="text-white" />
+            </div>
+            <span className="flex-1 text-left font-semibold text-red-700">Log Out</span>
+          </button>
         </div>
       </div>
     </div>
