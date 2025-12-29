@@ -42,7 +42,16 @@ export default function AboutPage() {
   return (
     <div className="pb-20 bg-white min-h-screen">
       <div className="max-w-md mx-auto p-6">
-        <h2 className="font-bold text-2xl mb-6">About Us</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-bold text-2xl">About Us</h2>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 transition-all"
+          >
+            <LogOut size={18} className="text-red-600" />
+            <span className="font-medium text-red-700">Log Out</span>
+          </button>
+        </div>
         <div className="space-y-2 mb-6">
           {links.map((link, index) => (
             <button
@@ -57,18 +66,6 @@ export default function AboutPage() {
               <CheckCircle size={18} className="text-green-500" />
             </button>
           ))}
-        </div>
-
-        <div className="mt-8">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 p-4 bg-red-50 border-2 border-red-200 rounded-xl hover:bg-red-100 hover:border-red-300 transition-all"
-          >
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-md">
-              <LogOut size={22} className="text-white" />
-            </div>
-            <span className="flex-1 text-left font-semibold text-red-700">Log Out</span>
-          </button>
         </div>
       </div>
     </div>
