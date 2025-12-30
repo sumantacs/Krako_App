@@ -5,6 +5,7 @@ import HomePage from './components/HomePage';
 import FriendsPage from './components/FriendsPage';
 import WalletPage from './components/WalletPage';
 import AboutPage from './components/AboutPage';
+import ProfilePage from './components/ProfilePage';
 import BottomNav from './components/BottomNav';
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
         return <AboutPage />;
       case 'wallet':
         return <WalletPage />;
+      case 'profile':
+        return <ProfilePage />;
       default:
         return <HomePage />;
     }
