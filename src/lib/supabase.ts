@@ -30,6 +30,7 @@ export interface Profile {
   daily_claim_amount: number;
   daily_claims_count: number;
   last_claim_date: string;
+  profile_picture_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -268,6 +269,103 @@ export async function handleDailyClaim(userId: string): Promise<{ success: boole
     };
   } catch (err) {
     console.error('Error in handleDailyClaim:', err);
+    return { success: false, error: 'An unexpected error occurred' };
+  }
+}
+
+export async function uploadProfilePicture(userId: string, file: File): Promise<{ success: boolean; url?: string; error?: string }> {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${userId}/profile.${fileExt}`;
+
+    const { data: existingFiles } = await supabase
+      .storage
+      .from('profile-pictures')
+      .list(userId);
+
+    if (existingFiles && existingFiles.length > 0) {
+      for (const existingFile of existingFiles) {
+        await supabase
+          .storage
+          .from('profile-pictures')
+          .remove([`${userId}/${existingFile.name}`]);
+      }
+    }
+
+    const { error: uploadError } = await supabase
+      .storage
+      .from('profile-pictures')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      return { success: false, error: 'Failed to upload image' };
+    }
+
+    const { data: { publicUrl } } = supabase
+      .storage
+      .from('profile-pictures')
+      .getPublicUrl(fileName);
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        profile_picture_url: publicUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error('Update profile error:', updateError);
+      return { success: false, error: 'Failed to update profile' };
+    }
+
+    return { success: true, url: publicUrl };
+  } catch (err) {
+    console.error('Error in uploadProfilePicture:', err);
+    return { success: false, error: 'An unexpected error occurred' };
+  }
+}
+
+export async function deleteProfilePicture(userId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { data: files } = await supabase
+      .storage
+      .from('profile-pictures')
+      .list(userId);
+
+    if (files && files.length > 0) {
+      const filePaths = files.map(file => `${userId}/${file.name}`);
+      const { error: deleteError } = await supabase
+        .storage
+        .from('profile-pictures')
+        .remove(filePaths);
+
+      if (deleteError) {
+        console.error('Delete error:', deleteError);
+        return { success: false, error: 'Failed to delete image' };
+      }
+    }
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        profile_picture_url: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error('Update profile error:', updateError);
+      return { success: false, error: 'Failed to update profile' };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error('Error in deleteProfilePicture:', err);
     return { success: false, error: 'An unexpected error occurred' };
   }
 }

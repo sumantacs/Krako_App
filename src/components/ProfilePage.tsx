@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Shield, Zap, LogOut, Play, Pause } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Shield, Zap, LogOut, Play, Pause, Camera, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { getOrCreateProfile, Profile } from '../lib/supabase';
+import { getOrCreateProfile, Profile, uploadProfilePicture, deleteProfilePicture } from '../lib/supabase';
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isMining, setIsMining] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadProfile();
@@ -45,6 +47,54 @@ export default function ProfilePage() {
     return `KM-${userId.slice(0, 8).toUpperCase()}`;
   };
 
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please select a valid image file (JPG, PNG, or WEBP)');
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+    const result = await uploadProfilePicture(user.id, file);
+
+    if (result.success && result.url) {
+      setProfile(prev => prev ? { ...prev, profile_picture_url: result.url || null } : null);
+    } else {
+      alert(result.error || 'Failed to upload image');
+    }
+
+    setUploading(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDeletePicture = async () => {
+    if (!user || !profile?.profile_picture_url) return;
+
+    if (!confirm('Are you sure you want to remove your profile picture?')) return;
+
+    setUploading(true);
+    const result = await deleteProfilePicture(user.id);
+
+    if (result.success) {
+      setProfile(prev => prev ? { ...prev, profile_picture_url: null } : null);
+    } else {
+      alert(result.error || 'Failed to delete image');
+    }
+
+    setUploading(false);
+  };
+
   if (loading) {
     return (
       <div className="pb-20 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center">
@@ -65,10 +115,39 @@ export default function ProfilePage() {
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
 
             <div className="relative z-10">
-              <img
-                src="/IMG-20250913-WA0005.jpg"
-                alt="Krako Logo"
-                className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border-4 border-white/30 shadow-lg"
+              <div className="relative inline-block mb-4">
+                <img
+                  src={profile?.profile_picture_url || "/IMG-20250913-WA0005.jpg"}
+                  alt="Profile"
+                  className="w-20 h-20 rounded-full object-cover mx-auto border-4 border-white/30 shadow-lg cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => fileInputRef.current?.click()}
+                />
+                <div
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {uploading ? (
+                    <div className="w-4 h-4 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+                  ) : (
+                    <Camera size={16} className="text-gray-700" />
+                  )}
+                </div>
+                {profile?.profile_picture_url && (
+                  <button
+                    onClick={handleDeletePicture}
+                    className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                    disabled={uploading}
+                  >
+                    <X size={14} className="text-white" />
+                  </button>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                onChange={handleFileSelect}
+                className="hidden"
               />
               <h1 className="text-2xl font-bold mb-1">Krako Miner</h1>
               <p className="text-white/90 text-sm">
