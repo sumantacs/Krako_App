@@ -165,7 +165,6 @@ export default function HomePage() {
       telegram: `https://t.me/share/url?url=https://krako.app&text=${encodeURIComponent(shareText)}`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(shareText + ' https://krako.app')}`,
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=https://krako.app`,
-      instagram: 'https://instagram.com',
     };
     window.open(urls[platform], '_blank');
   };
@@ -352,12 +351,6 @@ export default function HomePage() {
               <button
                 onClick={() => handleShare('twitter')}
                 className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform"
-              >
-                <Share2 size={20} />
-              </button>
-              <button
-                onClick={() => handleShare('instagram')}
-                className="w-12 h-12 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 transition-transform"
               >
                 <Share2 size={20} />
               </button>
