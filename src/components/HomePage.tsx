@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Share2, Zap, LogOut } from 'lucide-react';
 import TasksList from './TasksList';
 import ShopSection from './ShopSection';
-import KpontsRewardsSection from './KpontsRewardsSection';
+import KPOINTSRewardsSection from './KPOINTSRewardsSection';
 import { supabase, Task, ShopItem, RewardUtility, getOrCreateProfile, handleDailyClaim } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -96,7 +96,7 @@ export default function HomePage() {
     const { data, error } = await supabase
       .from('rewards_utilities')
       .select('*')
-      .order('kponts_required', { ascending: true });
+      .order('kpoints_required', { ascending: true });
 
     if (!error && data) {
       setRewardUtilities(data);
@@ -361,7 +361,7 @@ export default function HomePage() {
 
           <ShopSection items={shopItems} />
 
-          <KpontsRewardsSection items={rewardUtilities} userKponts={krakoBalance} />
+          <KPOINTSRewardsSection items={rewardUtilities} userKPOINTS={krakoBalance} />
         </div>
       </div>
     </div>

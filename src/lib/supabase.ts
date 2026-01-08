@@ -72,7 +72,7 @@ export interface RewardUtility {
   id: string;
   name: string;
   description: string;
-  kponts_required: number;
+  kpoints_required: number;
   category: string;
   icon: string;
   is_available: boolean;
@@ -87,7 +87,7 @@ export interface UserRedemption {
   id: string;
   user_id: string;
   utility_id: string;
-  kponts_spent: number;
+  kpoints_spent: number;
   status: string;
   redeemed_at: string;
   fulfilled_at: string | null;

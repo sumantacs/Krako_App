@@ -1,9 +1,9 @@
 import { Brain, Star, DollarSign, Zap, Trophy, Lock, Check } from 'lucide-react';
 import { RewardUtility } from '../lib/supabase';
 
-interface KpontsRewardsSectionProps {
+interface KPOINTSRewardsSectionProps {
   items: RewardUtility[];
-  userKponts: number;
+  userKPOINTS: number;
 }
 
 const iconMap: { [key: string]: any } = {
@@ -14,7 +14,7 @@ const iconMap: { [key: string]: any } = {
   trophy: Trophy,
 };
 
-export default function KpontsRewardsSection({ items, userKponts }: KpontsRewardsSectionProps) {
+export default function KPOINTSRewardsSection({ items, userKPOINTS }: KPOINTSRewardsSectionProps) {
   const handleRedeem = (item: RewardUtility) => {
     if (!item.is_available || item.is_coming_soon) {
       return;
@@ -22,23 +22,23 @@ export default function KpontsRewardsSection({ items, userKponts }: KpontsReward
     console.log('Redeeming:', item.name);
   };
 
-  const canAfford = (kpontsRequired: number) => {
-    return userKponts >= kpontsRequired;
+  const canAfford = (kpointsRequired: number) => {
+    return userKPOINTS >= kpointsRequired;
   };
 
   return (
     <div className="mb-8">
       <div className="mb-4">
-        <h2 className="font-bold text-lg mb-1">Future Utility of KPONTS</h2>
+        <h2 className="font-bold text-lg mb-1">Future Utility of KPOINTS</h2>
         <p className="text-sm text-gray-500">
-          Redeem your KPONTS for exclusive classes, merch, and services
+          Redeem your KPOINTS for exclusive classes, merch, and services
         </p>
       </div>
 
       <div className="space-y-3">
         {items.map((item) => {
           const IconComponent = iconMap[item.icon] || Star;
-          const affordable = canAfford(item.kponts_required);
+          const affordable = canAfford(item.kpoints_required);
           const isLocked = !item.is_available || item.is_coming_soon;
 
           return (
@@ -93,9 +93,9 @@ export default function KpontsRewardsSection({ items, userKponts }: KpontsReward
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-gray-900">
-                        {item.kponts_required.toLocaleString()}
+                        {item.kpoints_required.toLocaleString()}
                       </span>
-                      <span className="text-xs text-gray-500">KPONTS</span>
+                      <span className="text-xs text-gray-500">KPOINTS</span>
                     </div>
 
                     {isLocked ? (
@@ -120,7 +120,7 @@ export default function KpontsRewardsSection({ items, userKponts }: KpontsReward
 
                   {!affordable && !isLocked && (
                     <div className="mt-2 text-xs text-red-500">
-                      Need {(item.kponts_required - userKponts).toFixed(2)} more KPONTS
+                      Need {(item.kpoints_required - userKPOINTS).toFixed(2)} more KPOINTS
                     </div>
                   )}
                 </div>
@@ -132,8 +132,8 @@ export default function KpontsRewardsSection({ items, userKponts }: KpontsReward
 
       <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
         <p className="text-xs text-gray-700 text-center">
-          <span className="font-semibold">Your KPONTS Balance:</span>{' '}
-          {userKponts % 1 === 0 ? Math.floor(userKponts) : userKponts.toFixed(2)} KPONTS
+          <span className="font-semibold">Your KPOINTS Balance:</span>{' '}
+          {userKPOINTS % 1 === 0 ? Math.floor(userKPOINTS) : userKPOINTS.toFixed(2)} KPOINTS
         </p>
       </div>
     </div>

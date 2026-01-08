@@ -174,7 +174,7 @@ export default function ProfilePage() {
 
             <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border-2 border-amber-200">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-medium text-gray-600">KPONTS Balance</span>
+                <span className="text-sm font-medium text-gray-600">KPOINTS Balance</span>
                 <Zap size={20} className="text-amber-500 fill-amber-500" />
               </div>
               <p className="text-4xl font-bold text-gray-900 mb-1">
