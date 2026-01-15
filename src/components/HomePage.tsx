@@ -63,8 +63,14 @@ export default function HomePage() {
 
       const today = new Date().toISOString().split('T')[0];
       const lastClaimDate = profile.last_claim_date?.split('T')[0];
-      const dailyClaimsCount = lastClaimDate === today ? (profile.daily_claims_count || 0) : 0;
-      setRemainingClaims(20 - dailyClaimsCount);
+
+      let dailyClaimsCount = profile.daily_claims_count || 0;
+      if (lastClaimDate !== today) {
+        dailyClaimsCount = 0;
+      }
+
+      const remaining = 20 - dailyClaimsCount;
+      setRemainingClaims(remaining);
     }
   };
 
@@ -137,14 +143,17 @@ export default function HomePage() {
 
     if (result.success && result.amount !== undefined) {
       setKrakoBalance(prev => prev + result.amount);
-      setRemainingClaims(result.remainingClaims || 0);
 
-      const claimsLeft = result.remainingClaims || 0;
-      const totalEarned = ((20 - claimsLeft) * 0.05).toFixed(2);
+      const claimsLeft = result.remainingClaims ?? 0;
+      setRemainingClaims(claimsLeft);
+
+      const totalClaimsMade = 20 - claimsLeft;
+      const totalEarned = (totalClaimsMade * 0.05).toFixed(2);
+
       if (claimsLeft > 0) {
-        setClaimMessage(`+${result.amount.toFixed(2)} KPOINTS! Progress: ${totalEarned}/1.00 (${claimsLeft} claims left)`);
+        setClaimMessage(`+${result.amount.toFixed(2)} KPOINTS! Progress: ${totalEarned}/1.00 (${claimsLeft} ${claimsLeft === 1 ? 'claim' : 'claims'} left)`);
       } else {
-        setClaimMessage(`+${result.amount.toFixed(2)} KPOINTS! Daily limit of 1.00 KRAKO reached!`);
+        setClaimMessage(`+${result.amount.toFixed(2)} KPOINTS! Daily limit of 1.00 KPOINTS reached!`);
       }
 
       playCelebrationSound();
@@ -236,7 +245,7 @@ export default function HomePage() {
             )}
             <div className="mb-2 text-center text-sm text-gray-600">
               {remainingClaims > 0 ? (
-                <span>Daily Progress: <span className="font-bold text-orange-600">{((20 - remainingClaims) * 0.05).toFixed(2)}/1.00 KRAKO</span> ({remainingClaims} claims left)</span>
+                <span>Daily Progress: <span className="font-bold text-orange-600">{((20 - remainingClaims) * 0.05).toFixed(2)}/1.00 KPOINTS</span> ({remainingClaims} {remainingClaims === 1 ? 'claim' : 'claims'} left)</span>
               ) : (
                 <span className="font-bold text-red-600">Daily limit reached - Come back tomorrow!</span>
               )}
