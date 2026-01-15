@@ -21,17 +21,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       try {
+        console.log('[AuthContext] Initializing auth...');
+        console.log('[AuthContext] Current URL:', window.location.href);
+
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
-          console.error('Error getting session:', error);
+          console.error('[AuthContext] Error getting session:', error);
+        } else {
+          console.log('[AuthContext] Session retrieved:', session ? 'Session found' : 'No session');
         }
 
         setSession(session);
         setUser(session?.user ?? null);
+        setLoading(false);
       } catch (error) {
-        console.error('Error initializing auth:', error);
-      } finally {
+        console.error('[AuthContext] Error initializing auth:', error);
         setLoading(false);
       }
     };
@@ -40,20 +45,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[AuthContext] Auth state changed:', event);
+      console.log('[AuthContext] Session:', session ? 'Present' : 'None');
+      console.log('[AuthContext] User:', session?.user?.email);
 
       if (event === 'SIGNED_IN' && session) {
-        console.log('User signed in successfully');
+        console.log('[AuthContext] User signed in successfully');
         setSession(session);
         setUser(session.user);
         setLoading(false);
       } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out');
+        console.log('[AuthContext] User signed out');
         setSession(null);
         setUser(null);
         setLoading(false);
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        console.log('[AuthContext] Token refreshed');
+        setSession(session);
+        setUser(session.user);
+        setLoading(false);
       } else {
+        console.log('[AuthContext] Other auth event');
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
