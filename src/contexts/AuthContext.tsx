@@ -44,14 +44,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Auth state changed:', event, session?.user?.email);
 
       if (event === 'SIGNED_IN' && session) {
-        console.log('User signed in successfully, redirecting to /app');
+        console.log('User signed in successfully');
         setSession(session);
         setUser(session.user);
         setLoading(false);
-
-        if (window.location.pathname !== '/app') {
-          window.location.href = '/app';
-        }
       } else if (event === 'SIGNED_OUT') {
         console.log('User signed out');
         setSession(null);
@@ -72,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: window.location.origin + '/app',
+        emailRedirectTo: window.location.origin,
       },
     });
     return { error };
