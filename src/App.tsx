@@ -6,6 +6,7 @@ import FriendsPage from './components/FriendsPage';
 import WalletPage from './components/WalletPage';
 import AboutPage from './components/AboutPage';
 import ProfilePage from './components/ProfilePage';
+import LeaderboardPage from './components/LeaderboardPage';
 import BottomNav from './components/BottomNav';
 
 function App() {
@@ -31,6 +32,8 @@ function App() {
     switch (currentPage) {
       case 'home':
         return <HomePage />;
+      case 'leaderboard':
+        return <LeaderboardPage />;
       case 'friends':
         return <FriendsPage />;
       case 'about':

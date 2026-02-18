@@ -1,4 +1,4 @@
-import { Home, Users, Wallet, User } from 'lucide-react';
+import { Home, Users, Wallet, User, Trophy } from 'lucide-react';
 
 interface BottomNavProps {
   currentPage: string;
@@ -8,6 +8,7 @@ interface BottomNavProps {
 export default function BottomNav({ currentPage, onPageChange }: BottomNavProps) {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
+    { id: 'leaderboard', label: 'Ranks', icon: Trophy },
     { id: 'friends', label: 'Friends', icon: Users },
     { id: 'wallet', label: 'Wallet', icon: Wallet },
     { id: 'profile', label: 'Profile', icon: User },
